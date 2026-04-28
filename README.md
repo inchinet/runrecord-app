@@ -1,11 +1,12 @@
-# 跑步器 Running Tracker
-
-一個具有 Liquid Glass 介面的跑步紀錄器網頁應用程式  
-A web-based running tracker with stunning Liquid Glass UI design
+# Running Tracker (跑步器) - V3 原生封裝版 (V3 Native Wrapper Edition)
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-![UI](https://github.com/inchinet/runrecord/blob/main/runrecord.png)
-![UI](https://github.com/inchinet/runrecord/blob/main/runrecord2.png)
+![UI](https://github.com/inchinet/runrecord-app/blob/main/runrecord.png)
+![UI](https://github.com/inchinet/runrecord-app/blob/main/runrecord2.png)
+
+## 🚀 總覽 Overview
+V3 是「跑步器」的原生封裝版本，旨在解決行動瀏覽器在背景模式下限制 GPS 更新所造成的「背景到前景路徑斷層」問題。 透過從標準 Web 應用程式遷移到 **Capacitor** 原生封裝，我們實現了一個 **前景服務 (Foreground Service)**，確保即使在應用程式最小化或螢幕關閉時，也能持續進行追蹤。
+V3 is the native-wrapped version of the Running Tracker, designed to solve the "bg to fg path gaps" caused by mobile browsers throttling GPS in the background. By moving from a standard web app to a **Capacitor** native wrapper, we implement a **Foreground Service** that ensures continuous tracking even when the app is minimized or the screen is off.
 
 ## ✨ 功能特色 Features
 
@@ -19,58 +20,107 @@ A web-based running tracker with stunning Liquid Glass UI design
 ✅ **歷史查詢 History View** - 可篩選一週、一月、一年的紀錄 / Filter records by week, month, or year  
 ✅ **Excel 匯出 Excel Export** - 將紀錄匯出為 CSV 格式 / Export records to CSV format  
 ✅ **Liquid Glass UI** - 現代化玻璃擬態設計 / Modern glassmorphism design  
-✅ **背景 GPS 追蹤 Background GPS Tracking** - 透過 Service Worker 與心跳機制，即使應用程式在背景執行也能持續追蹤 GPS 位置 / Continues GPS tracking even when the app is in the background via Service Worker and a heartbeat mechanism  
+✅ **背景 GPS 追蹤 Background GPS Tracking** - 透過 Capacitor 機制，即使應用程式在背景執行也能持續追蹤 GPS 位置 / Continues GPS tracking even when the app is in the background via Capacitor mechanism  
 
+## ⚠️📋 使用前準備 / 關鍵設定 (API 金鑰) Prerequisites / Critical Configuration (API Key)
+**在建置或發布之前**，您必須提供一個有效的 Google Maps API 金鑰。
+**Before building or publishing**, you must provide a valid Google Maps API Key. 
+1. 開啟 `app.js`。/ Open `app.js`.
+2. 找到第 103 行：`const apiKey = 'Your_API_key';` / Locate line 103: `const apiKey = 'Your_API_key';`
+3. 將預留位置的值替換為您自己的有效 Google Maps API 金鑰。/ Replace the placeholder value with your own valid Google Maps API key.
+4. 如果要發布到 GitHub，**請勿**提交您的私密 API 金鑰。請使用預留位置或獨立的設定檔。/ If publishing to GitHub, **do not** commit your private API key. Use a placeholder or a separate configuration file.
 
-## 📋 使用前準備 Prerequisites
+## 🛠️ 原生實現細節 Native Implementation Details
 
-### 1. Google Maps API 金鑰 Google Maps API Key
-
-1. 前往 Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. 建立新專案或選擇現有專案 Create a new project or select existing one
-3. 啟用 Enable **Maps JavaScript API**
-4. 建立 API 金鑰 Create an API key
-5. 在 `index.html` 中替換 Replace in `index.html`:
-
-```html
-<!-- Line 133 -->
-<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE&callback=initMap" async defer></script>
-```
-
-將 `YOUR_API_KEY_HERE` 替換為您的 API 金鑰  
-Replace `YOUR_API_KEY_HERE` with your actual API key
-
-### 2. 執行環境需求 Requirements
-
-- **HTTPS 或 localhost** / HTTPS or localhost - 瀏覽器的 Geolocation API 需要安全環境 / Browser Geolocation API requires secure context
-- **支援 GPS 的裝置** / GPS-enabled device - 建議使用具有 GPS 功能的行動裝置 / Recommended to use mobile devices with GPS
-- **現代瀏覽器** / Modern browser - Chrome, Firefox, Safari, Edge (最新版本 latest versions)
-- **支援 Service Worker 的瀏覽器** / Service Worker-compatible browser - 必要用於背景 GPS 追蹤 / Essential for background GPS tracking
-
-## 💻 本地測試 Local Testing
-
-### 使用 Python Using Python
+### 0. 安裝設定 Setup
+需要 Android Studio 與對應的 SDK。 請在 `C:unrecord\V3` 資料夾中執行以下指令：
+Need android studio, SDK. Try running these commands in your `C:unrecord\V3` folder with all the programs in this repository:
 
 ```bash
-cd runrecord
-python -m http.server 8000
-# 然後在瀏覽器開啟 Then open in browser
-# http://localhost:8000
+# 1. 初始化 npm / Initialize npm
+npm init -y
+
+# 2. 安裝 Capacitor / Install Capacitor
+npm install @capacitor/core @capacitor/cli
+
+# 3. 初始化專案 / Initialize the project
+npx cap init "Running Tracker" "com.antigravity.runrecord" --web-dir www
+
+# 4. 新增 Android 平台 / Add Android platform
+npm install @capacitor/android
+npx cap add android
+
+# 5. 安裝背景地理位置外掛 / Install the BG Geolocation plugin
+npm install @capgo/background-geolocation
+npx cap sync android
+
+# 6. 建立 web 資料夾並複製檔案 / Create the web folder and copy files
+mkdir www
+cp index.html style.css app.js www/
 ```
 
-### 使用 Node.js Using Node.js
+完成後，執行 `npx cap open android`，這將會啟動 Android Studio。接著，您可以透過 **Build → Generate/Build APK(s)** 產生 APK。
+After running these, run `npx cap open android`. This will launch Android Studio. From there, you can just go to **Build → Generate/Build APK(s)**.
 
+### 1. 背景持續運作 Background Persistence
+- **框架 Framework:** Capacitor
+- **外掛 Plugin:** `@capgo/background-geolocation` (或類似提供前景服務的外掛 / or similar Foreground Service provider)
+- **機制 Mechanism:** 使用一個帶有持續性通知的 Android 前景服務，以防止作業系統終止 GPS 處理程序。/ Uses an Android Foreground Service with a persistent notification to prevent the OS from killing the GPS process.
+
+### 2. Android 所需權限 Android Permissions Required
+為確保功能正常，必須在 Android manifest 中授予以下權限：
+To function correctly, the following permissions must be granted in the Android manifest:
+- `android.permission.ACCESS_FINE_LOCATION`
+- `android.permission.ACCESS_BACKGROUND_LOCATION`
+- `android.permission.FOREGROUND_SERVICE`
+- `android.permission.FOREGROUND_SERVICE_LOCATION`
+- `android.permission.POST_NOTIFICATIONS` (Android 13+)
+
+### 3. 設定 Configuration
+原生行為透過 `capacitor.config.ts` 進行控制：
+The native behavior is controlled via `capacitor.config.ts`:
+- **間隔 Interval:** 5 秒 / 5 seconds
+- **距離過濾器 Distance Filter:** 5 公尺 / 5 meters
+- **通知 Notification:** "跑步器 正在追蹤"
+
+## 📂 專案結構 Project Structure
+- `C:unrecord\V3\app.js`: 主要邏輯 (混合原生/Web GPS) / Main logic (Hybrid Native/Web GPS)
+- `C:unrecord\V3\index.html`: 使用者介面 / User Interface
+- `C:unrecord\V3\capacitor.config.ts`: 原生封裝設定檔 / Native wrapper configuration
+- `C:unrecord\V3\style.css`: 樣式表檔案 / Style CSS file
+- `C:unrecord\V3\AndroidManifest_requirements.xml`: Android 需求權限參考 / Required Android permissions reference
+
+## 🧪 測試封裝版本 Testing the Wrapper
+1. 使用 Capacitor 建置專案：`npx cap add android` → `npx cap open android`。/ Build the project using Capacitor: `npx cap add android` → `npx cap open android`.
+2. 授予所有位置權限，包含「永遠允許」。/ Grant all location permissions, including "Allow all the time".
+3. 開始跑步，將應用程式切換到背景，並移動到 C 點。/ Start a run, put the app in the background, and move to point C.
+4. 返回應用程式，確認 B-C 路線已成功捕捉且沒有斷層。/ Return to the app to verify the path B-C is captured without gaps.
+
+## 📦 如何產生 .APK How to Generate the .APK
+
+### 步驟 1: 更新 Web 資源 Update Web Assets
+原生 APK 會讀取 `www` 資料夾的內容。每當您修改 `app.js`、`style.css` 或 `index.html` 時，都必須同步檔案：
+The native APK reads from the `www` folder. Whenever you modify `app.js`, `style.css`, or `index.html`, you must sync them:
 ```bash
-cd runrecord
-npx http-server -p 8000
+# 在 C:unrecord\V3\ 中執行 / Run in C:unrecord\V3
+mkdir -p www
+cp index.html style.css app.js www/
+npx cap sync android
 ```
 
-### 使用 PHP Using PHP
+### 步驟 2: 在 Android Studio 中建置 Build in Android Studio
+1. 執行 `npx cap open android` 以啟動 Android Studio。/ Run `npx cap open android` to launch Android Studio.
+2. 等待 **Gradle Sync** (底部進度條) 完成。/ Wait for the **Gradle Sync** (bottom progress bar) to complete.
+3. 前往頂部選單：**Build** → **Build Bundle(s) / APK(s)** → **Build APK(s)**。
+4. 完成後，右下角會出現一個彈出視窗。點擊 **"locate"** 連結以開啟包含 APK 的資料夾。/ Once completed, a popup will appear in the bottom-right. Click the **"locate"** link to open the folder containing the APK.
+   - 預設路徑 / Default path: `C:unrecord\V3\android\app\build\outputs\apk\debug\app-debug.apk`
 
-```bash
-cd runrecord
-php -S localhost:8000
-```
+### 步驟 3: 裝置安裝與設定 Device Installation & Configuration
+在您的 Android 裝置上安裝 APK 後，請套用以下設定以防止背景追蹤中斷：
+After installing the APK on your Android device, apply these settings to prevent background gaps:
+- **位置權限 Location Permission:** 設定 → 應用程式 → 跑步器 → 權限 → 位置 → **「永遠允許」**。/ Settings → Apps → Running Tracker → Permissions → Location → **"Allow all the time"**.
+- **電池最佳化 Battery Optimization:** 設定 → 應用程式 → 跑步器 → 電池 → **「不受限制」**。/ Settings → Apps → Running Tracker → Battery → **"Unrestricted"**.
+- **通知 Notifications:** (Android 13+) 確保允許通知，以便前景服務正常運作。/ (Android 13+) Ensure notifications are allowed so the Foreground Service can run.
 
 ## 📱 使用方式 How to Use
 
@@ -109,12 +159,12 @@ Click "停止 Stop" when finished, record will be saved automatically
 
 ```
 runrecord/
-├── index.html          # 主要 HTML 結構 Main HTML structure, sudo chomd 600 index.html
-├── style.css           # Liquid Glass 樣式設計 Liquid Glass styling
-├── app.js              # 核心 JavaScript 功能 Core JavaScript functionality
-├── sw.js               # Service Worker，負責背景 GPS 追蹤 / Service Worker for background GPS tracking
-├── sw-registrar.js     # Service Worker 註冊腳本 / Service Worker registration script
-└── README.md           # 說明文件 Documentation
+├── app.js              # 核心 JavaScript 功能 / Core JavaScript functionality
+├── index.html          # 主要 HTML 結構 / Main HTML structure
+├── package.json        # npm 套件設定檔 / npm package configuration file
+├── package-lock.json   # npm 套件鎖定檔 / npm package lock file
+├── style.css           # Liquid Glass 樣式設計 / Liquid Glass styling
+└── README.md           # 說明文件 / Documentation
 ```
 
 ## 🎨 技術特點 Technical Highlights
@@ -131,7 +181,7 @@ runrecord/
 - 高精度模式 High accuracy mode (`enableHighAccuracy`)
 - 即時位置更新 Real-time position updates
 - 訊號強度視覺化指示器 Visual signal strength indicator
-- **智慧自動暫停 Smart Auto-Pause**: 當 GPS 精度誤差超過 20m 時自動暫停，防止「殭屍跑步」狀態。當訊號恢復至 20m 以內時將自動恢復追蹤。 / Auto-pauses when accuracy > 20m to prevent "zombie" states, and automatically resumes when signal accuracy returns to <<  20m.
+- **智慧自動暫停 Smart Auto-Pause**: 當 GPS 精度誤差超過 20m 時自動暫停，防止「殭屍跑步」狀態。當訊號恢復至 20m 以內時將自動恢復追蹤。 / Auto-pauses when accuracy > 20m to prevent "zombie" states, and automatically resumes when signal accuracy returns to < 20m.
 - **遲滯自動恢復 Hysteresis Auto-Resume**: 需訊號精度恢復至優於 20m 才自動繼續，確保軌跡準確 / Requires signal accuracy < 20m to resume, ensuring clean tracks
 - **動態防飄移濾波 Dynamic Anti-Drift Filter**: 根據活動類型動態濾除異常速度尖峰 (步行 >10km/h, 跑步 >20km/h)，有效防止軌跡亂跳 / Dynamically filters speed spikes based on activity type (Walking >10km/h, Running >20km/h) to prevent drift jumps
 - 自動地圖居中 Automatic map centering during activity
@@ -147,65 +197,19 @@ runrecord/
 - 高精度座標追蹤 High-precision coordinate tracking
 - 即時累積距離計算 Real-time cumulative distance calculation
 
-## 🌐 瀏覽器相容性 Browser Compatibility
-
-| 瀏覽器 Browser | 版本 Version | 支援度 Support |
-|----------------|--------------|----------------|
-| Chrome         | 90+          | ✅ 完整支援 Full support |
-| Firefox        | 88+          | ✅ 完整支援 Full support |
-| Safari         | 14+          | ✅ 完整支援 Full support |
-| Edge           | 90+          | ✅ 完整支援 Full support |
-
-## ⚠️ 注意事項 Important Notes
-
-🔒 **隱私權 Privacy**: 所有資料僅儲存在您的裝置上，不會上傳至任何伺服器  
-All data is stored only on your device, never uploaded to any server
-
-🔋 **電池消耗 Battery**: GPS 追蹤會消耗較多電量，建議充電時使用  
-GPS tracking consumes more battery, recommended to use while charging
-
-🌐 **網路需求 Network**: 需要網路連線以載入 Google Maps  
-Internet connection required to load Google Maps
-
-📍 **定位精度 Accuracy**: 室內或高樓密集區域可能影響 GPS 精度  
-Indoor or high-rise areas may affect GPS accuracy
-
-## 🔧 疑難排解 Troubleshooting
-
-### GPS 無法定位 GPS Not Working
-- ✅ 確認裝置 GPS 已開啟 Ensure device GPS is enabled
-- ✅ 確認瀏覽器已授予位置存取權限 Confirm browser has location permission
-- ✅ 移動到開闊區域以獲得更好的訊號 Move to open area for better signal
-- ✅ 使用 HTTPS 或 localhost Use HTTPS or localhost (not `http://192.168.x.x`)
-
-### 地圖無法顯示 Map Not Showing
-- ✅ 檢查 Google Maps API 金鑰是否正確 Check if API key is correct
-- ✅ 確認 API 金鑰已啟用 Maps JavaScript API Confirm Maps JavaScript API is enabled
-- ✅ 檢查網路連線是否正常 Check internet connection
-
-### 資料無法儲存 Data Not Saving
-- ✅ 確認瀏覽器允許 localStorage Ensure browser allows localStorage
-- ✅ 檢查是否在無痕模式 Check if in incognito/private mode
-- ✅ 清除瀏覽器快取後重試 Clear browser cache and retry
-
-## 🆓 GitHub Pages 託管 GitHub Pages Hosting
-   N/A as using google API
-
 ## 📄 授權 License
-
-此專案採用 MIT 授權  
-This project is licensed under the MIT License
+此專案採用 MIT 授權。
+This project is licensed under the MIT License.
 
 ## 👨‍💻 作者 Author
-
-Created by [inchinet](https://github.com/inchinet)
+由 [inchinet](https://github.com/inchinet) 建立。
+Created by [inchinet](https://github.com/inchinet).
 
 ## 🙏 致謝 Acknowledgments
-
-- Google Maps API for mapping functionality
-- Inter font family for typography
+感謝 Google Maps API 提供地圖功能。
+Thanks to Google Maps API for mapping functionality.
 
 ---
 
 **享受您的跑步！ Enjoy your running! 🏃‍♂️💨**
-"# runrecord" 
+"# runrecord-app" 
