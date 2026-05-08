@@ -29,12 +29,34 @@ V3 is the native-wrapped version of the Running Tracker, designed to solve the "
 2. 找到第 103 行：`const apiKey = 'Your_API_key';` / Locate line 103: `const apiKey = 'Your_API_key';`
 3. 將預留位置的值替換為您自己的有效 Google Maps API 金鑰。/ Replace the placeholder value with your own valid Google Maps API key.
 4. 如果要發布到 GitHub，**請勿**提交您的私密 API 金鑰。請使用預留位置或獨立的設定檔。/ If publishing to GitHub, **do not** commit your private API key. Use a placeholder or a separate configuration file.
+	5. **API 金鑰限制 (安全性)**：建議在 Google AI Studio/Cloud Console 中對 API 金鑰設定「API 限制」，僅啟用 Geocoding API 與 Maps JavaScript API，並將「應用程式限制」設為「無」。/ **API Key Restrictions (Security)**: It is recommended to use "API restrictions" in Google AI Studio/Cloud Console to allow only the Geocoding API and Maps JavaScript API, and set "Application restrictions" to "None".
 
 ## 🛠️ 原生實現細節 Native Implementation Details
 
 ### 0. 安裝設定 Setup
-需要 Android Studio 與對應的 SDK。 請在 `C:unrecord\V3` 資料夾中執行以下指令：
-Need android studio, SDK. Try running these commands in your `C:unrecord\V3` folder with all the programs in this repository:
+需要 Android Studio 與對應的 SDK / Requires Android Studio and the corresponding SDK:
+
+To check if the Android SDK is installed / 檢查是否已安裝 Android SDK
+`adb --version`
+
+Locate the SDK Installation Path / 找到 SDK 安裝路徑
+`where adb`
+
+Installing the Android SDK is most commonly done through Android Studio / 安裝 Android SDK 最常用的方法是使用 Android Studio
+https://developer.android.com/studio?hl=zh-tw
+
+Set Environment Variables in path / 設定環境變數
+`Add C:\path-to-sdk\platform-tools`
+
+Java Development Kit (JDK) is required / 需要 Java 開發工具包 (JDK)
+https://www.oracle.com/apac/java/technologies/downloads/
+
+To check if the JDK is installed / 檢查是否已安裝 JDK
+`javac -version`
+
+
+請在 `C:\\runrecord\V3` 資料夾中執行以下指令，並確保此儲存庫中的所有程式都已載入：
+Try running these commands in your `C:\\runrecord\V3` folder with all the programs in this repository:
 
 ```bash
 # 1. 初始化 npm / Initialize npm
@@ -59,8 +81,8 @@ mkdir www
 cp index.html style.css app.js www/
 ```
 
-完成後，執行 `npx cap open android`，這將會啟動 Android Studio。接著，您可以透過 **Build → Generate/Build APK(s)** 產生 APK。
-After running these, run `npx cap open android`. This will launch Android Studio. From there, you can just go to **Build → Generate/Build APK(s)**.
+完成後，執行 `npx cap open android`，這將會啟動 Android Studio。接著，您可以透過 **Build → Generate APK(s)** 產生 APK。
+After running these, run `npx cap open android`. This will launch Android Studio. From there, you can just go to **Build → Generate APK(s)**.
 
 ### 1. 背景持續運作 Background Persistence
 - **框架 Framework:** Capacitor
@@ -84,16 +106,18 @@ The native behavior is controlled via `capacitor.config.ts`:
 - **通知 Notification:** "跑步器 正在追蹤"
 
 ## 📂 專案結構 Project Structure
-- `C:unrecord\V3\app.js`: 主要邏輯 (混合原生/Web GPS) / Main logic (Hybrid Native/Web GPS)
-- `C:unrecord\V3\index.html`: 使用者介面 / User Interface
-- `C:unrecord\V3\capacitor.config.ts`: 原生封裝設定檔 / Native wrapper configuration
-- `C:unrecord\V3\style.css`: 樣式表檔案 / Style CSS file
-- `C:unrecord\V3\AndroidManifest_requirements.xml`: Android 需求權限參考 / Required Android permissions reference
+- `C:\\runrecord\V3\app.js`: 主要邏輯 (混合原生/Web GPS) / Main logic (Hybrid Native/Web GPS)
+- `C:\\runrecord\V3\index.html`: 使用者介面 / User Interface
+- `C:\\runrecord\V3\capacitor.config.ts`: 原生封裝設定檔 / Native wrapper configuration
+- `C:\\runrecord\V3\style.css`: 樣式表檔案 / Style CSS file
+- `C:\\runrecord\V3\AndroidManifest_requirements.xml`: Android 需求權限參考 / Required Android permissions reference
+- `C:\\runrecord\V3\package.json`: npm 套件設定檔 / npm package configuration file
+- `C:\\runrecord\V3\package-lock.json`: npm 套件鎖定檔 / npm package lock file
 
 ## 🧪 測試封裝版本 Testing the Wrapper
 1. 使用 Capacitor 建置專案：`npx cap add android` → `npx cap open android`。/ Build the project using Capacitor: `npx cap add android` → `npx cap open android`.
 2. 授予所有位置權限，包含「永遠允許」。/ Grant all location permissions, including "Allow all the time".
-3. 開始跑步，將應用程式切換到背景，並移動到 C 點。/ Start a run, put the app in the background, and move to point C.
+3. GPS訊號強的情況下開始跑步(A 點)，將應用程式切換到背景 (B 點)，並移動到 C 點。/ Start a run under strong GPS signal at point A, put the app in the background (point B), and move to point C.
 4. 返回應用程式，確認 B-C 路線已成功捕捉且沒有斷層。/ Return to the app to verify the path B-C is captured without gaps.
 
 ## 📦 如何產生 .APK How to Generate the .APK
@@ -102,7 +126,7 @@ The native behavior is controlled via `capacitor.config.ts`:
 原生 APK 會讀取 `www` 資料夾的內容。每當您修改 `app.js`、`style.css` 或 `index.html` 時，都必須同步檔案：
 The native APK reads from the `www` folder. Whenever you modify `app.js`, `style.css`, or `index.html`, you must sync them:
 ```bash
-# 在 C:unrecord\V3\ 中執行 / Run in C:unrecord\V3
+# 在 C:\\runrecord\V3\ 中執行 / Run in C:\\runrecord\V3
 mkdir -p www
 cp index.html style.css app.js www/
 npx cap sync android
@@ -111,16 +135,21 @@ npx cap sync android
 ### 步驟 2: 在 Android Studio 中建置 Build in Android Studio
 1. 執行 `npx cap open android` 以啟動 Android Studio。/ Run `npx cap open android` to launch Android Studio.
 2. 等待 **Gradle Sync** (底部進度條) 完成。/ Wait for the **Gradle Sync** (bottom progress bar) to complete.
-3. 前往頂部選單：**Build** → **Build Bundle(s) / APK(s)** → **Build APK(s)**。
-4. 完成後，右下角會出現一個彈出視窗。點擊 **"locate"** 連結以開啟包含 APK 的資料夾。/ Once completed, a popup will appear in the bottom-right. Click the **"locate"** link to open the folder containing the APK.
-   - 預設路徑 / Default path: `C:unrecord\V3\android\app\build\outputs\apk\debug\app-debug.apk`
+3. 前往頂部選單：**Build** → **Generate App Bundles or APK(s)** → **Generate APK(s)**。
+4. 完成後，右下角會出現一個彈出視窗。完成點擊 **"locate"** 連結以開啟包含 APK 的資料夾。/ Once completed, a popup will appear in the bottom-right. Click the **"locate"** link to open the folder containing the APK.
+   - 預設路徑 / Default path: `C:\\runrecord\V3\android\app\build\outputs\apk\debug\app-debug.apk`
 
 ### 步驟 3: 裝置安裝與設定 Device Installation & Configuration
 在您的 Android 裝置上安裝 APK 後，請套用以下設定以防止背景追蹤中斷：
 After installing the APK on your Android device, apply these settings to prevent background gaps:
-- **位置權限 Location Permission:** 設定 → 應用程式 → 跑步器 → 權限 → 位置 → **「永遠允許」**。/ Settings → Apps → Running Tracker → Permissions → Location → **"Allow all the time"**.
-- **電池最佳化 Battery Optimization:** 設定 → 應用程式 → 跑步器 → 電池 → **「不受限制」**。/ Settings → Apps → Running Tracker → Battery → **"Unrestricted"**.
+- **位置權限 Location Permission:** 設定 → 應用程式 → 跑步器 → 權限 → 位置 → **「永遠允許」**/**「僅在使用此應用程式時允許」** 。/ Settings → Apps → Running Tracker → Permissions → Location → **"Allow all the time"**/**"Allow only when using this application"**.
+- **電池最佳化 Battery Optimization:** 設定 → 應用程式 → 跑步器 → 電池 → **「不受限制」**/**「允許在背景使用>無限制」**。/ Settings → Apps → Running Tracker → Battery → **"Unrestricted"**/**"Allowed for use in the background > Unrestricted"**.
 - **通知 Notifications:** (Android 13+) 確保允許通知，以便前景服務正常運作。/ (Android 13+) Ensure notifications are allowed so the Foreground Service can run.
+
+p.s. generate your own app icon using a .png photo / 使用 .png 圖片產生您自己的應用程式圖標
+https://easyappicon.com/
+unzip and copy all the files to `C:\\runrecord\V3\android\app\src\main\res` mipmap-* and values folder / 
+解壓縮並將所有檔案複製到 `C:\\runrecord\V3\android\app\src\main\res` 目錄下的 mipmap-* 和 values 資料夾中
 
 ## 📱 使用方式 How to Use
 
@@ -154,18 +183,6 @@ Click "停止 Stop" when finished, record will be saved automatically
 - 在「活動紀錄」區域查看所有過往紀錄 View all past records in "活動紀錄 History" section
 - 使用篩選器選擇時間範圍 Use filters to select time range
 - 點擊「匯出 Excel」下載 CSV 格式的紀錄 Click "匯出 Excel" to download CSV
-
-## 📁 檔案結構 File Structure
-
-```
-runrecord/
-├── app.js              # 核心 JavaScript 功能 / Core JavaScript functionality
-├── index.html          # 主要 HTML 結構 / Main HTML structure
-├── package.json        # npm 套件設定檔 / npm package configuration file
-├── package-lock.json   # npm 套件鎖定檔 / npm package lock file
-├── style.css           # Liquid Glass 樣式設計 / Liquid Glass styling
-└── README.md           # 說明文件 / Documentation
-```
 
 ## 🎨 技術特點 Technical Highlights
 
@@ -213,3 +230,4 @@ Thanks to Google Maps API for mapping functionality.
 
 **享受您的跑步！ Enjoy your running! 🏃‍♂️💨**
 "# runrecord-app" 
+Web version: (https://github.com/inchinet/runrecord)
