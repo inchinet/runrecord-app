@@ -1,0 +1,25 @@
+<!--
+  Note: This is a conceptual AndroidManifest.xml snippet for the wrapper.
+  In a real Capacitor project, these entries are merged into the final manifest.
+-->
+<manifest xmlns:android="http://android.com/apk/res/android">
+    <!-- GPS Permissions -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
+    <!-- Foreground Service Permissions (Required for Android 10+) -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+
+    <!-- Notification Permission (Required for Android 13+) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <application>
+        <service
+            android:name="com.capgo.backgroundgeolocation.BackgroundGeolocationService"
+            android:foregroundServiceType="location"
+            android:enabled="true"
+            android:exported="false" />
+    </application>
+</manifest>

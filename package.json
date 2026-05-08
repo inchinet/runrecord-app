@@ -1,0 +1,31 @@
+{
+  "name": "v3",
+  "version": "1.0.0",
+  "description": "V3 is the native-wrapped version of the Running Tracker, designed to solve the \"B-C path gaps\" caused by mobile browsers throttling GPS in the background. By moving from a standard web app to a **Capacitor** native wrapper, we implement a **Foreground Service** that ensures continuous tracking even when the app is minimized or the screen is off.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inchinet/runrecord.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/inchinet/runrecord/issues"
+  },
+  "homepage": "https://github.com/inchinet/runrecord#readme",
+  "dependencies": {
+    "@capacitor/android": "^8.3.1",
+    "@capacitor/cli": "^8.3.1",
+    "@capacitor/core": "^8.3.1",
+    "@capacitor/filesystem": "^8.1.2",
+    "@capgo/background-geolocation": "^8.0.30"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  }
+}
